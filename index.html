@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SIAP CHECK — Pemeriksa Karya Ilmiah</title>
+<style>
+:root{--navy:#10233f;--blue:#2563eb;--cyan:#0ea5a4;--bg:#f4f7fb;--ink:#17243a;--muted:#64748b;--line:#e2e8f0}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 Inter,system-ui,Arial,sans-serif}
+header{background:linear-gradient(120deg,#10233f,#174b77);color:white;padding:26px max(20px,calc((100% - 1120px)/2))}
+.brand{display:flex;align-items:center;gap:12px}.logo{width:44px;height:44px;border-radius:13px;background:#fff;color:#174b77;display:grid;place-items:center;font-weight:900;font-size:19px}
+h1{font-size:23px;margin:0}header p{margin:5px 0 0;color:#d8e7f7}
+main{max-width:1120px;margin:26px auto;padding:0 18px 50px}.notice{background:#fff8e7;border:1px solid #f4d48a;padding:13px 15px;border-radius:12px;color:#75520b;margin-bottom:18px}
+.layout{display:grid;grid-template-columns:1.45fr .8fr;gap:18px}.panel{background:white;border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:0 5px 18px #1831530a}
+h2{font-size:17px;margin:0 0 13px}.sub{color:var(--muted);font-size:13px;margin-top:-7px}
+label{font-weight:650;font-size:13px;display:block;margin:14px 0 6px}input,textarea,select{width:100%;border:1px solid #cbd5e1;border-radius:10px;padding:11px 12px;font:inherit;background:#fff;color:var(--ink)}
+textarea{min-height:260px;resize:vertical}textarea:focus,input:focus{outline:2px solid #bfdbfe;border-color:var(--blue)}
+.row{display:flex;gap:10px;flex-wrap:wrap}.row>*{flex:1;min-width:150px}
+button{border:0;border-radius:10px;padding:11px 15px;font-weight:700;cursor:pointer;background:var(--blue);color:white}button.secondary{background:#eaf1ff;color:#1d4ed8}button.dark{background:var(--navy)}button:disabled{opacity:.5;cursor:wait}
+.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:13px}.hint{font-size:12px;color:var(--muted)}
+.drop{border:1px dashed #94a3b8;border-radius:12px;padding:13px;text-align:center;background:#f8fafc;color:var(--muted);font-size:13px}
+.metric{background:#f8fafc;border:1px solid var(--line);border-radius:13px;padding:14px}.metric strong{font-size:27px;display:block;color:var(--navy)}.metric span{font-size:12px;color:var(--muted)}
+.metrics{display:grid;grid-template-columns:1fr 1fr;gap:10px}.result{margin-top:18px}.bar{height:9px;background:#e2e8f0;border-radius:99px;overflow:hidden;margin:7px 0 12px}.bar i{height:100%;display:block;background:var(--cyan);width:0}
+.tag{display:inline-block;border-radius:20px;background:#eaf1ff;color:#1d4ed8;padding:3px 9px;font-size:12px;font-weight:700}
+ul{padding-left:20px}.muted{color:var(--muted)}.source{padding:10px;border:1px solid var(--line);border-radius:10px;margin:8px 0;font-size:13px;overflow-wrap:anywhere}
+footer{max-width:1120px;margin:auto;padding:0 18px 30px;color:var(--muted);font-size:12px}
+@media(max-width:800px){.layout{grid-template-columns:1fr}header{padding:22px 18px}textarea{min-height:220px}}
+</style>
+</head>
+<body>
+<header><div class="brand"><div class="logo">SC</div><div><h1>SIAP CHECK</h1><p>AI & Plagiarism Checker · Pemeriksa Karya Tulis Ilmiah</p></div></div></header>
+<main>
+<div class="notice"><b>Transparansi hasil:</b> versi gratis ini tidak memakai API berbayar. Analisis AI adalah indikator heuristik, bukan bukti. Pemeriksaan kemiripan dilakukan terhadap referensi yang Anda masukkan; pencarian web dibuka melalui mesin pencari dan bukan pemindaian otomatis seluruh internet.</div>
+<div class="layout">
+<section class="panel">
+<h2>1. Masukkan dokumen</h2><p class="sub">Tempel tulisan atau unggah dokumen. Tidak ada batas kata yang ditetapkan aplikasi; kemampuan tetap bergantung pada perangkat dan browser.</p>
+<label>Nama penulis (opsional)</label><input id="author" placeholder="Nama siswa / penulis">
+<label>Judul karya ilmiah (opsional)</label><input id="docTitle" placeholder="Judul makalah / KTI">
+<label>Teks yang akan diperiksa</label>
+<textarea id="text" placeholder="Tempel seluruh isi karya tulis ilmiah di sini..."></textarea>
+<div class="drop" style="margin-top:10px"><input id="file" type="file" accept=".txt,.docx,.pdf" style="border:0;padding:4px"><div>Format TXT, DOCX, PDF · File diproses di browser</div></div>
+<div class="actions"><button id="analyze">Analisis tulisan</button><button class="secondary" id="clear">Bersihkan</button></div>
+<p class="hint" id="wordCount">0 kata · 0 karakter</p>
+</section>
+<aside class="panel">
+<h2>2. Referensi pembanding</h2><p class="sub">Tambahkan kutipan atau teks sumber yang ingin dibandingkan dengan dokumen.</p>
+<label>Nama / URL sumber</label><input id="refName" placeholder="Contoh: Artikel jurnal A / https://...">
+<label>Isi teks referensi</label><textarea id="refText" style="min-height:130px" placeholder="Tempel isi sumber pembanding di sini..."></textarea>
+<div class="actions"><button class="dark" id="addRef">Tambah referensi</button></div>
+<div id="refs"><p class="hint">Belum ada referensi ditambahkan.</p></div>
+</aside>
+</div>
+<section class="panel result" id="results" hidden>
+<h2>3. Hasil pemeriksaan</h2>
+<div class="metrics">
+<div class="metric"><strong id="simScore">—</strong><span>Kemiripan dengan referensi yang dimasukkan</span></div>
+<div class="metric"><strong id="aiScore">—</strong><span>Indikator pola tulisan AI (heuristik)</span></div>
+</div>
+<div style="margin-top:15px"><b>Analisis kemiripan</b><div class="bar"><i id="simBar"></i></div><div id="simDetails" class="muted"></div></div>
+<div style="margin-top:15px"><b>Analisis pola tulisan</b><div class="bar"><i id="aiBar"></i></div><div id="aiDetails" class="muted"></div></div>
+<div style="margin-top:15px"><b>Kalimat untuk ditelusuri di web</b><p class="hint">Pilih cuplikan yang cukup khas lalu buka pencarian web untuk menelusuri kemungkinan sumber. Hasil pencarian perlu diverifikasi manual.</p><div id="webQueries"></div></div>
+<div class="actions"><button id="download">Unduh laporan TXT</button><button class="secondary" onclick="window.print()">Cetak / Simpan PDF</button></div>
+</section>
+</main>
+<footer>SIAP CHECK · Pemrosesan teks dilakukan secara lokal di browser. Dokumen tidak dikirim ke server aplikasi. Untuk penilaian akademik, tinjau sumber, kutipan, daftar pustaka, dan konteks secara manual.</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.8.0/mammoth.browser.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+const $=id=>document.getElementById(id);let refs=[],lastReport="";
+function words(s){return (s.toLowerCase().match(/[a-z0-9À-ÿ_'-]+/g)||[])}
+function updateCount(){let s=$('text').value;$('wordCount').textContent=words(s).length.toLocaleString('id-ID')+' kata · '+s.length.toLocaleString('id-ID')+' karakter'}
+$('text').addEventListener('input',updateCount);
+$('file').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;try{let t='';
+if(f.name.toLowerCase().endsWith('.txt'))t=await f.text();
+else if(f.name.toLowerCase().endsWith('.docx')){if(!window.mammoth)throw Error('Pustaka DOCX belum termuat. Periksa koneksi internet.');let b=await f.arrayBuffer();t=(await mammoth.extractRawText({arrayBuffer:b})).value}
+else if(f.name.toLowerCase().endsWith('.pdf')){if(!window.pdfjsLib)throw Error('Pustaka PDF belum termuat. Periksa koneksi internet.');pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';let pdf=await pdfjsLib.getDocument({data:await f.arrayBuffer()}).promise;for(let p=1;p<=pdf.numPages;p++){let page=await pdf.getPage(p),c=await page.getTextContent();t+=c.items.map(x=>x.str).join(' ')+'\\n'}}
+$('text').value=t;updateCount()}catch(err){alert('Gagal membaca file: '+err.message)}});
+$('addRef').onclick=()=>{let name=$('refName').value.trim()||'Referensi '+(refs.length+1),text=$('refText').value.trim();if(!text)return alert('Masukkan teks referensi terlebih dahulu.');refs.push({name,text});$('refName').value='';$('refText').value='';renderRefs()};
+function renderRefs(){$('refs').innerHTML=refs.length?refs.map((r,i)=>`<div class="source"><b>${esc(r.name)}</b> · ${words(r.text).length} kata <button class="secondary" style="float:right;padding:3px 8px" onclick="removeRef(${i})">Hapus</button></div>`).join(''):'<p class="hint">Belum ada referensi ditambahkan.</p>'}
+function removeRef(i){refs.splice(i,1);renderRefs()}
+function esc(s){return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function shingles(s,n=5){let w=words(s),set=new Set();for(let i=0;i<=w.length-n;i++)set.add(w.slice(i,i+n).join(' '));return set}
+function similarity(a,b){let A=shingles(a),B=shingles(b);if(!A.size||!B.size)return 0;let hit=0;A.forEach(x=>{if(B.has(x))hit++});return 100*hit/Math.max(1,A.size)}
+function aiHeuristic(s){let sentences=s.split(/[.!?]+/).map(x=>x.trim()).filter(x=>words(x).length>=5);let w=words(s);if(sentences.length<3||w.length<80)return {score:null,details:'Teks terlalu pendek untuk analisis pola yang bermakna (disarankan minimal sekitar 80 kata dan 3 kalimat).'};let lens=sentences.map(x=>words(x).length),mean=lens.reduce((a,b)=>a+b,0)/lens.length,variance=lens.reduce((a,b)=>a+(b-mean)**2,0)/lens.length,cv=Math.sqrt(variance)/mean;let unique=new Set(w).size/w.length;let transitions=(s.match(/\b(selain itu|oleh karena itu|dengan demikian|di sisi lain|secara keseluruhan|lebih lanjut|dapat disimpulkan|pada dasarnya|in conclusion|furthermore|moreover)\b/gi)||[]).length/sentences.length;let repeated=1-unique;let score=Math.max(0,Math.min(100,Math.round(48+(0.35-cv)*45+(transitions-.08)*120+(repeated-.48)*100)));return {score,details:`Variasi panjang kalimat: ${(cv*100).toFixed(1)}%; keragaman kosakata: ${(unique*100).toFixed(1)}%; frasa transisi terdeteksi: ${Math.round(transitions*100)}% kalimat. Ini hanya ciri statistik sederhana dan mudah keliru; bukan detektor AI tervalidasi.`}}
+$('analyze').onclick=()=>{let t=$('text').value.trim();if(!t)return alert('Masukkan teks atau unggah dokumen terlebih dahulu.');let scores=refs.map(r=>({name:r.name,score:similarity(t,r.text)})).sort((a,b)=>b.score-a.score);let max=scores.length?scores[0].score:0,ai=aiHeuristic(t);$('simScore').textContent=refs.length?max.toFixed(1)+'%':'N/A';$('simBar').style.width=max+'%';$('simDetails').innerHTML=refs.length?(max>=20?'Ditemukan kemiripan frasa dengan salah satu referensi. Periksa kutipan dan atribusi sumber.':'Kemiripan frasa rendah terhadap referensi yang Anda masukkan.')+'<ul>'+scores.map(x=>`<li>${esc(x.name)}: <b>${x.score.toFixed(1)}%</b></li>`).join('')+'</ul>':'Belum ada referensi pembanding. Tambahkan sumber untuk menghitung kemiripan lokal.';
+$('aiScore').textContent=ai.score===null?'N/A':ai.score+'/100';$('aiBar').style.width=(ai.score||0)+'%';$('aiDetails').textContent=ai.details;
+let sents=t.split(/(?<=[.!?])\s+/).filter(x=>words(x).length>=8).sort((a,b)=>words(b).length-words(a).length).slice(0,5);$('webQueries').innerHTML=sents.length?sents.map(x=>`<div class="source">${esc(x.slice(0,260))}<br><a target="_blank" rel="noopener" href="https://www.google.com/search?q=${encodeURIComponent('"'+x.slice(0,180)+'"')}">Telusuri frasa ini di Google ↗</a></div>`).join(''):'Tidak ditemukan cuplikan yang cukup panjang.';
+$('results').hidden=false;lastReport=`SIAP CHECK — LAPORAN PEMERIKSAAN\\nPenulis: ${$('author').value}\\nJudul: ${$('docTitle').value}\\nJumlah kata: ${words(t).length}\\nKemiripan referensi: ${refs.length?max.toFixed(1)+'%':'Tidak tersedia'}\\nIndikator pola AI: ${ai.score===null?'Tidak tersedia':ai.score+'/100'}\\n\\nCatatan: skor AI bukan bukti kepengarangan. Kemiripan hanya dibandingkan dengan referensi yang dimasukkan.\\n\\nRincian referensi:\\n${scores.map(x=>x.name+': '+x.score.toFixed(1)+'%').join('\\n')}\\n\\nAnalisis AI: ${ai.details}\\n`; $('results').scrollIntoView({behavior:'smooth'})};
+$('download').onclick=()=>{let blob=new Blob([lastReport],{type:'text/plain;charset=utf-8'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='laporan-siap-check.txt';a.click();URL.revokeObjectURL(a.href)};
+$('clear').onclick=()=>{$('text').value='';$('file').value='';$('results').hidden=true;updateCount()};
+</script></body></html>
